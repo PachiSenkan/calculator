@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import random
+import openpyxl
 
 st.set_page_config(
   page_title="Калькулятор ХВЗК",
@@ -18,6 +19,19 @@ tab1, tab2, tab3, tab4 = st.sidebar.tabs(["1 группа", "2 группа", "3
 
 sidebar = st.sidebar
 with sidebar:
+    st.header("Или выберите файл для загрузки")
+    uploaded_file = st.file_uploader("Загрузка файла", label_visibility="hidden")
+    if uploaded_file is not None:
+        df1 = pd.read_excel(uploaded_file)
+        statet = st.session_state
+        statet.g11 = df1.iloc[0, 0]
+        statet.g12 = df1.iloc[0, 1]
+        statet.g13 = df1.iloc[0, 2]
+        statet.g14 = df1.iloc[0, 3]
+        statet.g15 = df1.iloc[0, 4]
+        statet.g16 = df1.iloc[0, 5]
+        statet.g21 = df1.iloc[0, 6]
+
     with tab1:
         col11, col21, col31, col41 = st.columns(4)
         group1 = st.container()
@@ -70,7 +84,7 @@ with sidebar:
     with tab4:
         '4'
 
-button_main = st.button("Рассчитать все")
+        #st.session_state.g11 = df1[0,1]
 
 container = st.container()
 
@@ -87,103 +101,79 @@ df_model4 = pd.DataFrame([[state.g21, state.g26, state.g211]],
 
 def healthy(res):
     if res == 0:
-        return "Здоров"
+        return "Здоров:full_moon_with_face:"
     if res > 0 and res < 1:
-        return "НЯК ремиссия"
+        return "НЯК ремиссия:ok_hand:"
     if res >= 1 and res < 2:
-        return "БК ремиссия"
+        return "БК ремиссия:ok_hand:"
     if res >= 2 and res < 3:
-        return "НКК ремиссия"
+        return "НКК ремиссия:ok_hand:"
     if res >= 3 and res < 4:
-        return "НЯК обострение"
+        return "НЯК обострение:broken_heart:"
     if res >= 4 and res < 5:
-        return "БК обострение"
+        return "БК обострение:broken_heart:"
     if res >= 5:
-        return "НКК обострение"
+        return "НКК обострение:broken_heart:"
 
 
 
 with tab1_main:
-    model1 = st.form("Модель 1")
-    with model1:
         st.header("Модель 1")
         st.subheader("Введенные показатели")
         df_model1
-        submit_form1 = st.form_submit_button("Рассчитать")
-        if submit_form1 or button_main:
-            st.subheader("Полученное значение")
-            res1 = 0
-            for col in df_model1.keys():
-                res1 += df_model1.get(col)
-            diagnose1 = res1[0]
-            st.write(res1)
-            st.write(diagnose1)
+        st.subheader("Полученное значение")
+        res1 = 0
+        for col in df_model1.keys():
+            res1 += df_model1.get(col)
+        diagnose1 = healthy(res1[0])
+        st.write(res1)
+        st.subheader(diagnose1)
 
 with tab2_main:
-    model2 = st.form("Модель 2")
-    with model2 or button_main:
         st.header("Модель 2")
         st.subheader("Введенные показатели")
         df_model2
-        submit_form2 = st.form_submit_button("Рассчитать")
-        if submit_form2:
-            st.subheader("Полученное значение")
-            res2 = 0
-            for col in df_model2.keys():
-                res2 += df_model2.get(col)
-            diagnose2 = res2[0]
-            st.write(res2)
-            st.write(diagnose2)
+        st.subheader("Полученное значение")
+        res2 = 0
+        for col in df_model2.keys():
+            res2 += df_model2.get(col)
+        diagnose2 = healthy(res2[0])
+        st.write(res2)
+        st.subheader(diagnose2)
 
 with tab3_main:
-    model3 = st.form("Модель 3")
-    with model3 or button_main:
         st.header("Модель 3")
         st.subheader("Введенные показатели")
         df_model3
-        submit_form3 = st.form_submit_button("Рассчитать")
-        if submit_form3:
-            st.subheader("Полученное значение")
-            res3 = 0
-            for col in df_model3.keys():
-                res3 += df_model3.get(col)
-            diagnose3 = res3[0]
-            st.write(res3)
-            st.write(diagnose3)
+        st.subheader("Полученное значение")
+        res3 = 0
+        for col in df_model3.keys():
+            res3 += df_model3.get(col)
+        diagnose3 = healthy(res3[0])
+        st.write(res3)
+        st.subheader(diagnose3)
 
 with tab4_main:
-    model4 = st.form("Модель 4")
-    with model4:
         st.header("Модель 4")
         st.subheader("Введенные показатели")
         df_model4
-        submit_form4 = st.form_submit_button("Рассчитать")
-        if submit_form4 or button_main:
-            st.subheader("Полученное значение")
-            res4 = 0
-            for col in df_model4.keys():
-                res4 += df_model4.get(col)
-            diagnose4 = res4[0]
-            st.write(res4)
-            st.write(diagnose4)
+        st.subheader("Полученное значение")
+        res4 = 0
+        for col in df_model4.keys():
+            res4 += df_model4.get(col)
+        diagnose4 = healthy(res4[0])
+        st.write(res4)
+        st.subheader(diagnose4)
 
 with container:
-    if submit_form1 or button_main:
-        st.write("1 модель:", diagnose1)
-    else:
-        st.write("1 модель:")
-    if submit_form2 or button_main:
-        st.write("2 модель:", diagnose2)
-    else:
-        st.write("2 модель:")
-    if submit_form3 or button_main:
-        st.write("3 модель:", diagnose3)
-    else:
-        st.write("3 модель:")
-    if submit_form4 or button_main:
-        st.write("4 модель:", diagnose4)
-    else:
-        st.write("4 модель:")
+    all = pd.DataFrame([[diagnose1, diagnose2, diagnose3, diagnose4]],
+                       columns=["Модель 1","Модель 2", "Модель 3", "Модель 4"])
+    st.table(all)
+    st.write("Модель 1:", diagnose1)
+    st.write("Модель 2:", diagnose2)
+    st.write("Модель 3:", diagnose3)
+    st.write("Модель 4:", diagnose4)
+
 
 session = st.button("Показать")
 session_no = st.button("Убрать")
