@@ -11,6 +11,8 @@ st.set_page_config(page_title='Калькулятор ХВЗК')
 
 st.header("Диагностический калькулятор для оценки формы и стадии воспалительных заболеваний кишечника")
 st.subheader("Введите необходимые показатели")
+if 'FIO' in state:
+    state['FIO']
 
 tab1, tab2, tab3, tab4 = st.tabs(["1 группа показателей", "2 группа показателей",
                                   "3 группа показателей", "4 группа показателей"])
@@ -18,17 +20,21 @@ tab1, tab2, tab3, tab4 = st.tabs(["1 группа показателей", "2 г
 
 st.subheader("Или выберите файл для загрузки")
 
+for key in state.keys():
+    if key != 'uploaded':
+        state[key] = state[key]
+state.update()
+
 uploaded_file = st.file_uploader("Загрузка файла", label_visibility="hidden")
-if uploaded_file is not None:
-    df1 = pd.read_excel(uploaded_file)
-    statet = st.session_state
-    statet.hemoglobin_state = df1.iloc[0, 0]
-    statet.mchc_state = df1.iloc[0, 1]
-    statet.leukocyte_state = df1.iloc[0, 2]
-    statet.hist_act_state = df1.iloc[0, 3]
-    statet.hematokrit_state = df1.iloc[0, 4]
-    statet.soe_state = df1.iloc[0, 5]
-    statet.ampl_def_state = df1.iloc[0, 6]
+#if uploaded_file is not None:
+#    df1 = pd.read_excel(uploaded_file)
+#    state.hemoglobin_state = df1.iloc[0, 0]
+#    state.mchc_state = df1.iloc[0, 1]
+#    state.leukocyte_state = df1.iloc[0, 2]
+#    state.hist_act_state = df1.iloc[0, 3]
+#    state.hematokrit_state = df1.iloc[0, 4]
+#    state.soe_state = df1.iloc[0, 5]
+#    state.ampl_def_state = df1.iloc[0, 6]
 
 with tab1:
     tab1_col1, tab1_col2 = st.columns(2)
@@ -188,16 +194,23 @@ with tab4_main:
         st.write(res4)
         st.subheader(diagnose4)
 with container:
-    c1,c2,c3,c4 = st.columns(4)
+    c1,c2,c3,c4,c5,c6,c7,c8 = st.columns(8)
     with c1:
         "**Модель 1:**"
-        st.write(diagnose1)
     with c2:
-        st.write("Модель 2:", diagnose2)
+        st.write(diagnose1)
     with c3:
-        st.write("Модель 3:", diagnose3)
+        "**Модель 2:**"
     with c4:
-        st.write("Модель 4:", diagnose4)
+        st.write(diagnose2)
+    with c5:
+        "**Модель 3:**"
+    with c6:
+        st.write(diagnose3)
+    with c7:
+        "**Модель 4:**"
+    with c8:
+        st.write(diagnose4)
 
 state.update()
 

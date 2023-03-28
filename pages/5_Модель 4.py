@@ -23,6 +23,8 @@ df_model4 = pd.DataFrame([[state.s_20_5_state, state.s_omega_3_6_state, state.s_
 
 st.header("Диагностическая модель 4")
 st.subheader("Введенные показатели")
+if 'FIO' in state:
+    state['FIO']
 df_model4
 st.subheader("Полученное значение")
 res = 0
@@ -32,7 +34,11 @@ diagnose = healthy(res[0])
 st.write(res)
 st.subheader("Предлагаемый диагноз")
 st.write(diagnose)
+if 'uploaded_params' in state:
+    st.subheader("Все данные пациента")
+    state['uploaded_patient']
 
 for key in state.keys():
-  state[key] = state[key]
+    if key != 'uploaded':
+        state[key] = state[key]
 state.update()

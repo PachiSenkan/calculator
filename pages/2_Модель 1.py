@@ -23,6 +23,8 @@ df_model1 = pd.DataFrame([[state['hemoglobin_state'], state.mcv_state, state.e_c
 
 st.header("Диагностическая модель 1")
 st.subheader("Введенные показатели")
+if 'FIO' in state:
+    state['FIO']
 df_model1
 st.subheader("Полученное значение")
 res1 = 0
@@ -32,7 +34,12 @@ diagnose1 = healthy(res1[0])
 st.write(res1)
 st.subheader("Предлагаемый диагноз")
 st.write(diagnose1)
+if 'uploaded_params' in state:
+    st.subheader("Все данные пациента")
+    state['uploaded_patient']
+
 
 for key in state.keys():
-  state[key] = state[key]
+    if key != 'uploaded':
+        state[key] = state[key]
 state.update()
