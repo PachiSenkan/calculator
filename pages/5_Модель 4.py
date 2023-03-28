@@ -42,3 +42,5 @@ if state.keys():
         if key != 'uploaded':
             state[key] = state[key]
     state.update()
+else:
+    st.header("Диагностическая модель 4")
