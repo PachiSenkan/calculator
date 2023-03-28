@@ -17,28 +17,28 @@ def healthy(res):
     return "БК обострение"
   if res >= 5:
     return "НКК обострение"
+if state.keys():
+    df_model4 = pd.DataFrame([[state.s_20_5_state, state.s_omega_3_6_state, state.s_poly_state]],
+                            columns=['s 5,8,11,14,17-c20:5', 's омега-3/омега-6', 's полиненасыщ'])
 
-df_model4 = pd.DataFrame([[state.s_20_5_state, state.s_omega_3_6_state, state.s_poly_state]],
-                        columns=['s 5,8,11,14,17-c20:5', 's омега-3/омега-6', 's полиненасыщ'])
+    st.header("Диагностическая модель 4")
+    st.subheader("Введенные показатели")
+    if 'FIO' in state:
+        state['FIO']
+    df_model4
+    st.subheader("Полученное значение")
+    res = 0
+    for col in df_model4.keys():
+      res += df_model4.get(col)
+    diagnose = healthy(res[0])
+    st.write(res)
+    st.subheader("Предлагаемый диагноз")
+    st.write(diagnose)
+    if 'uploaded_params' in state:
+        st.subheader("Все данные пациента")
+        state['uploaded_patient']
 
-st.header("Диагностическая модель 4")
-st.subheader("Введенные показатели")
-if 'FIO' in state:
-    state['FIO']
-df_model4
-st.subheader("Полученное значение")
-res = 0
-for col in df_model4.keys():
-  res += df_model4.get(col)
-diagnose = healthy(res[0])
-st.write(res)
-st.subheader("Предлагаемый диагноз")
-st.write(diagnose)
-if 'uploaded_params' in state:
-    st.subheader("Все данные пациента")
-    state['uploaded_patient']
-
-for key in state.keys():
-    if key != 'uploaded':
-        state[key] = state[key]
-state.update()
+    for key in state.keys():
+        if key != 'uploaded':
+            state[key] = state[key]
+    state.update()

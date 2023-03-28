@@ -17,29 +17,29 @@ def healthy(res):
     return "БК обострение"
   if res >= 5:
     return "НКК обострение"
-
-df_model1 = pd.DataFrame([[state['hemoglobin_state'], state.mcv_state, state.e_cis_18_1_state]],
-                        columns=['Гемоглобин', 'MCV', 'e c-цис (c-c18:1)'])
-
-st.header("Диагностическая модель 1")
-st.subheader("Введенные показатели")
-if 'FIO' in state:
-    state['FIO']
-df_model1
-st.subheader("Полученное значение")
-res1 = 0
-for col in df_model1.keys():
-  res1 += df_model1.get(col)
-diagnose1 = healthy(res1[0])
-st.write(res1)
-st.subheader("Предлагаемый диагноз")
-st.write(diagnose1)
-if 'uploaded_params' in state:
-    st.subheader("Все данные пациента")
-    state['uploaded_patient']
-
-
-for key in state.keys():
-    if key != 'uploaded':
-        state[key] = state[key]
-state.update()
+if state.keys():
+    df_model1 = pd.DataFrame([[state['hemoglobin_state'], state.mcv_state, state.e_cis_18_1_state]],
+                            columns=['Гемоглобин', 'MCV', 'e c-цис (c-c18:1)'])
+    
+    st.header("Диагностическая модель 1")
+    st.subheader("Введенные показатели")
+    if 'FIO' in state:
+        state['FIO']
+    df_model1
+    st.subheader("Полученное значение")
+    res1 = 0
+    for col in df_model1.keys():
+      res1 += df_model1.get(col)
+    diagnose1 = healthy(res1[0])
+    st.write(res1)
+    st.subheader("Предлагаемый диагноз")
+    st.write(diagnose1)
+    if 'uploaded_params' in state:
+        st.subheader("Все данные пациента")
+        state['uploaded_patient']
+    
+    
+    for key in state.keys():
+        if key != 'uploaded':
+            state[key] = state[key]
+    state.update()
