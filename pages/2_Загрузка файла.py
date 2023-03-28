@@ -75,7 +75,7 @@ if uploaded_file is not None:
 
 if 'uploaded_patient' in state:
     st.subheader('Исследуемый пациент')
-
+    patient = st.container()
     if st.button('Следующий пациент'):
         if state['uploaded_counter'] < len(state['uploaded_table'].index):
             state['uploaded_counter'] += 1
@@ -89,7 +89,8 @@ if 'uploaded_patient' in state:
             # if par != 'FIO':
             state[par] = state['uploaded_table'].iloc[state['uploaded_counter']-1,i]
             i += 1
-    st.dataframe(state['uploaded_patient'])
+    with patient:
+        st.dataframe(state['uploaded_patient'])
 
 if 'uploaded_table' in state:
     st.subheader("Загруженные данные")
