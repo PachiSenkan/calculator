@@ -4,3 +4,4 @@ numpy
 openpyxl
 xlsxwriter
 Orange3
+PyQt5
