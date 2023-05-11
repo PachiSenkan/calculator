@@ -3,6 +3,4 @@ pandas
 numpy
 openpyxl
 xlsxwriter
-orange3
-pyQt5
-opencv-python-headless
+Orange3
