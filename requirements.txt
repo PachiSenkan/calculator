@@ -3,5 +3,3 @@ pandas
 numpy
 openpyxl
 xlsxwriter
-pyQt5
-Orange3

@@ -37,13 +37,34 @@ def getValuesForModel(model):
     listOfFeatures = getFeaturesFromModel(model)
 
     dictOfValForModel = {}
-    for colName in listOfFeatures:
-        #st.write(colName, end='')
-        if colName in state and state[colName] != 0:
-            #st.write(f' ...Найден, значение: {dictOfSliderVal[colName]}')
-            dictOfValForModel[colName] = state[colName]
-        else:
-            st.warning(f'Введите значение:{colName}')
+    with st.expander("Введите недостающие показатели"):
+        for colName in listOfFeatures:
+            #st.write(colName, end='')
+            if colName in state and state[colName] != 0:
+                #st.write(f' ...Найден, значение: {dictOfSliderVal[colName]}')
+                dictOfValForModel[colName] = state[colName]
+            else:
+        
+                st.warning(f'Введите:{colName}')
+                state['Exception'] = True
+    return dictOfValForModel
+
+def getValuesForModelFile(model, patient):
+    # st.write('Формирование значений признаков для конкретной модели')
+
+    listOfFeatures = getFeaturesFromModel(model)
+
+    dictOfValForModel = {}
+    with st.expander("Введите недостающие показатели"):
+        for colName in listOfFeatures:
+            # st.write(colName, end='')
+            if colName in patient:
+                #st.write(f'{colName} ...Найден, значение: {patient[colName]}')
+                dictOfValForModel[colName] = patient[colName]
+            #else:
+
+                #st.warning(f'Введите:{colName}')
+                #state['Exception'] = True
     return dictOfValForModel
 
 FileList = [
@@ -53,6 +74,91 @@ FileList = [
     r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК НЯК-НКК Дерево5 X-Свой4. vPub.pkcls',
     r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК НЯК-НКК LogisticReg_L1_C=0. vPub.pkcls',
 ]
+
+
+def calculateDiagnoseDisease(num, dict, print):
+    clf = load_model_file(FileList[num])
+    #listOfFeatures = getFeaturesFromModel(clf)
+    if dict != None:
+        for v in dict:
+            if v in state:
+                state[v] = dict[v]
+    dictOfValForModel = getValuesForModel(clf)
+    if state['Exception'] == False:
+        #st.write(dictOfValForModel)
+        df_forModel = pd.DataFrame.from_dict(dictOfValForModel, orient='index', dtype=np.float64).T  # , 'columns' 'index', 'tight'
+        if print:
+            st.dataframe(df_forModel)
+        #st.write(df_forModel.dtypes)
+        targetClasesName = ['Здоров', 'Болен']
+        #print(df_forModel.values.dtype())
+        #st.write(clf.predict_proba(df_forModel.values)[0])
+        y_probability = clf.predict_proba(df_forModel.values)[0]
+        y_fullAnswer = clf.predict(df_forModel.values)
+        y_numOfClass = int(y_fullAnswer[0][0])
+        
+
+        return zip(targetClasesName, y_probability)
+    else:
+        state['Exception'] = False
+
+
+def calculateDiagnoseForm(num, dict, print):
+    clf = load_model_file(FileList[num])
+    listOfFeatures = getFeaturesFromModel(clf)
+    #st.write(listOfFeatures)
+    if dict != None:
+        for v in dict:
+            if v in state:
+                state[v] = dict[v]
+    dictOfValForModel = getValuesForModel(clf)
+    if state['Exception'] == False:
+        df_forModel = pd.DataFrame.from_dict(dictOfValForModel, orient='index', dtype=np.float64).T  # , 'columns' 'index', 'tight'
+        if print:
+            st.dataframe(df_forModel)
+        targetClasesName = ['НЯК', 'НКК']
+        #print(df_forModel.values.dtype())
+        y_probability = clf.predict_proba(df_forModel.values)[0]
+
+        y_fullAnswer = clf.predict(df_forModel.values)
+        y_numOfClass = int(y_fullAnswer[0][0])
+
+        return zip(targetClasesName, y_probability)
+    else:
+        state['Exception'] = False
+
+
+def calculateDiagnoseDiseaseFile(num, patient):
+
+    clf = load_model_file(FileList[num])
+    # listOfFeatures = getFeaturesFromModel(clf)
+    dictOfValForModel = getValuesForModelFile(clf, patient)
+    #st.write(dictOfValForModel)
+    df_forModel = pd.DataFrame.from_dict(dictOfValForModel, dtype=np.float64)  # , 'columns' 'index', 'tight'
+    targetClasesName = ['Здоров', 'Болен']
+    #st.write(df_forModel.values)
+    y_probability = clf.predict_proba(df_forModel.values)[0]
+    y_fullAnswer = clf.predict(df_forModel.values)
+    y_numOfClass = int(y_fullAnswer[0][0])
+    #for tclass, prob in zip(targetClasesName, y_probability):
+    #    st.write(f'{tclass: >6}: {prob:.1%}')
+    return zip(targetClasesName, y_probability)
+
+def calculateDiagnoseFormFile(num, patient):
+    clf = load_model_file(FileList[num])
+    # listOfFeatures = getFeaturesFromModel(clf)
+    dictOfValForModel = getValuesForModelFile(clf, patient)
+    #st.write(dictOfValForModel)
+    df_forModel = pd.DataFrame.from_dict(dictOfValForModel, dtype=np.float64)  # , 'columns' 'index', 'tight'
+    targetClasesName = ['НЯК', 'НКК']
+    #st.write(df_forModel)
+    y_probability = clf.predict_proba(df_forModel.values)[0]
+    y_fullAnswer = clf.predict(df_forModel.values)
+    y_numOfClass = int(y_fullAnswer[0][0])
+    #for tclass, prob in zip(targetClasesName, y_probability):
+    #    st.write(f'{tclass: >6}: {prob:.1%}')
+    return zip(targetClasesName, y_probability)
+
 fileName = FileList[0]
 clf = load_model_file(fileName)
 listOfFeatures = getFeaturesFromModel(clf)

@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import random
 import openpyxl
+from pages.neuralModels import calculateDiagnoseDisease
+from pages.neuralModels import calculateDiagnoseForm
 
 from streamlit import session_state as state
 
@@ -68,63 +70,57 @@ with tab3:
             st.number_input("s омега-3/омега-6", 0.0, 100.0, key="s омега-6/омега-3")
             st.number_input("s полиненасыщ", 0.0, 100.0, key = "s полиненасыщ")
 
-#df_model1 = pd.DataFrame([[state.hemoglobin_state, state.mcv_state, state.e_cis_18_1_state]],
-#                        columns=['Гемоглобин', 'MCV', 'e c-цис (c-c18:1)'])
-#df_model2 = pd.DataFrame([[state.hematokrit_state, state.discocyte_state, state.s_t_18_1_state]],
-#                        columns=['Гематокрит', 'Доля дискоцитов', 's t-c18:1'])
-#df_model3 = pd.DataFrame([[state.ampl_def_state, state.soe_state, state.eritr_speed_state]],
-#                        columns=['Ампл деф на 1мгц', 'СОЭ', 'Скорость движения эритроцитов'])
-#df_model4 = pd.DataFrame([[state.s_20_5_state, state.s_omega_3_6_state, state.s_poly_state]],
-#                        columns=['s 5,8,11,14,17-c20:5', 's омега-3/омега-6', 's полиненасыщ'])
-#
-def healthy(res):
-    if res == 0:
-        return "Здоров"
-    if res > 0 and res < 1:
-        return "НЯК ремиссия"
-    if res >= 1 and res < 2:
-        return "БК ремиссия"
-    if res >= 2 and res < 3:
-        return "НКК ремиссия"
-    if res >= 3 and res < 4:
-        return "НЯК обострение"
-    if res >= 4 and res < 5:
-        return "БК обострение"
-    if res >= 5:
-        return "НКК обострение"
-
-#def calc(model):
-#    res = 0
-#    for col in model.keys():
-#        res += model.get(col)
-#    return healthy(res[0])
-#
-#diagnose1 = calc(df_model1)
-#diagnose2 = calc(df_model2)
-#diagnose3 = calc(df_model3)
-#diagnose4 = calc(df_model4)
-
 st.subheader("Полученные результаты")
 results = st.container()
-
-#with results:
-#    c1,c2,c3,c4,c5,c6,c7,c8 = st.columns([3,3,3,3,3,3,3,3])
-#    with c1:
-#        "**Модель 1:**"
-#    with c2:
-#        #st.write(diagnose1)
-#    with c3:
-#        "**Модель 2:**"
-#    with c4:
-#        #st.write(diagnose2)
-#    with c5:
-#        "**Модель 3:**"
-#    with c6:
-#        #st.write(diagnose3)
-#    with c7:
-#        "**Модель 4:**"
-#    with c8:
-#        #st.write(diagnose4)
+dictOfSliderVal = {
+    'гемоглобин':137.,
+    'гематокрит':44.,
+    'mcv':83.,'соэ':6.,
+    'ферритин':81.,
+    'кальпротектин':43.,
+    'e c-цис (c-c18:1)':9.011,
+    'e t-транс (t-c18:1)':1.298,
+    'e 7,10,13,16-c22:4':2.263,
+    'e 5,8,11,14-c20:4':9.985,
+    'e полиненасыщ':26.087,
+    's 7,10,13,16-c22:4':.151,
+    's омега-3':1.905,
+    's 5,8,11,14-c20:4':4.706,
+    's омега-6/омега-3':12.999,
+    's полиненасыщ':26.694,
+    }
+with results:
+    c1,c2,c3,c4,c5, = st.columns([3,3,3,3,3])
+    with c1:
+        "**Модель 1:**"
+        result = calculateDiagnoseDisease(0, None, False)
+        if result:
+            for tclass, prob in result:
+                st.write(f'{tclass: >6}: {prob:.1%}')
+    with c2:
+        "**Модель 2:**"
+        result = (calculateDiagnoseDisease(1, None, False))
+        if result:
+            for tclass, prob in result:
+                st.write(f'{tclass: >6}: {prob:.1%}')
+    with c3:
+        "**Модель 3:**"
+        result = (calculateDiagnoseDisease(2, None, False))
+        if result:
+            for tclass, prob in result:
+                st.write(f'{tclass: >6}: {prob:.1%}')
+    with c4:
+        "**Модель 4:**"
+        result = (calculateDiagnoseForm(3, None, False))
+        if result:
+            for tclass, prob in result:
+                st.write(f'{tclass: >6}: {prob:.1%}')
+    with c5:
+        "**Модель 5:**"
+        result = (calculateDiagnoseForm(4, None, False))
+        if result:
+            for tclass, prob in result:
+                st.write(f'{tclass: >6}: {prob:.1%}')
 
 state.update()
 

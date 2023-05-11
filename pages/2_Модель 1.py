@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
 from streamlit import session_state as state
-from Главная import healthy
 from pages.neuralModels import load_model_file
 from pages.neuralModels import getFeaturesFromModel
 from pages.neuralModels import getValuesForModel
 from pages.neuralModels import FileList
+from pages.neuralModels import calculateDiagnoseDisease
 
 st.set_page_config(page_title='Калькулятор ХВЗК')
 
@@ -15,12 +15,13 @@ if state.keys():
     st.subheader("Введенные показатели")
     if 'FIO' in state:
         state['FIO']
-    clf = load_model_file(FileList[0])
-    listOfFeatures = getFeaturesFromModel(clf)
+#    clf = load_model_file(FileList[0])
+#    listOfFeatures = getFeaturesFromModel(clf)
     dictOfSliderVal = {
     'гемоглобин':137.,
     'гематокрит':44.,
-    'mcv':83.,'соэ':6.,
+    'mcv':83.,
+    'соэ':6.,
     'ферритин':81.,
     'кальпротектин':43.,
     'e c-цис (c-c18:1)':9.011,
@@ -34,26 +35,32 @@ if state.keys():
     's омега-6/омега-3':12.999,
     's полиненасыщ':26.694,
     }
-    for v in dictOfSliderVal:
-        if v in state:
-            state[v] = dictOfSliderVal[v]
-    #dictOfSliderVal
-    dictOfValForModel = getValuesForModel(clf)
-    df_forModel = pd.DataFrame.from_dict(dictOfValForModel,orient='index').T # , 'columns' 'index', 'tight'
-    
-    df_forModel
-    targetClasesName = ['Здоров','Болен']
-    
-    y_probability = clf.predict_proba(df_forModel.values)[0]
-    
-    y_fullAnswer = clf.predict(df_forModel.values)
-    y_numOfClass = int( y_fullAnswer[0][0])
-
-    st.subheader("Предлагаемый диагноз")
-
-    for tclass, prob in zip( targetClasesName, y_probability):
-        st.write(f'{tclass:>6}: {prob:.1%}')
-
+    state['Exception'] = False
+    result = calculateDiagnoseDisease(0, None, True)
+    if result:
+        st.subheader("Предлагаемый диагноз")
+        for tclass, prob in result:
+            st.write(f'{tclass: >6}: {prob:.1%}')
+#    for v in dictOfSliderVal:
+#        if v in state:
+#            state[v] = dictOfSliderVal[v]
+#    #dictOfSliderVal
+#    dictOfValForModel = getValuesForModel(clf)
+#    df_forModel = pd.DataFrame.from_dict(dictOfValForModel,orient='index').T # , 'columns' 'index', 'tight'
+#
+#    df_forModel
+#    targetClasesName = ['Здоров','Болен']
+#
+#    y_probability = clf.predict_proba(df_forModel.values)[0]
+#
+#    y_fullAnswer = clf.predict(df_forModel.values)
+#    y_numOfClass = int( y_fullAnswer[0][0])
+#
+#    st.subheader("Предлагаемый диагноз")
+#
+#    for tclass, prob in zip( targetClasesName, y_probability):
+#        st.write(f'{tclass: >6}: {prob:.1%}')
+#
     if 'uploaded_params' in state:
         st.subheader("Все данные пациента")
         state['uploaded_patient']

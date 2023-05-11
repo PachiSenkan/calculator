@@ -5,9 +5,17 @@ import numpy as np
 import random
 import openpyxl
 import io
+import copy
 from streamlit import cache
 from streamlit import session_state as state
-from Главная import healthy
+from pages.neuralModels import calculateDiagnoseFormFile
+from pages.neuralModels import calculateDiagnoseDiseaseFile
+from pages.neuralModels import calculateDiagnoseForm
+from pages.neuralModels import calculateDiagnoseDisease
+from pages.neuralModels import getFeaturesFromModel
+from pages.neuralModels import getValuesForModel
+from pages.neuralModels import getValuesForModelFile
+
 st.header("Диагностический калькулятор для оценки формы и стадии воспалительных заболеваний кишечника")
 
 st.subheader("Выберите файл для загрузки")
@@ -35,14 +43,7 @@ def convert_df(df):
 
 if state.keys():
     ""
-    #df_model1 = pd.DataFrame([[state['hemoglobin_state'], state.mcv_state, state.e_cis_18_1_state]],
-    #                        columns=['Гемоглобин', 'MCV', 'e c-цис (c-c18:1)'])
-    #df_model2 = pd.DataFrame([[state.hematokrit_state, state.discocyte_state, state.s_t_18_1_state]],
-    #                        columns=['Гематокрит', 'Доля дискоцитов', 's t-c18:1'])
-    #df_model3 = pd.DataFrame([[state.ampl_def_state, state.soe_state, state.eritr_speed_state]],
-    #                        columns=['Ампл деф на 1мгц', 'СОЭ', 'Скорость движения эритроцитов'])
-    #df_model4 = pd.DataFrame([[state.s_20_5_state, state.s_omega_3_6_state, state.s_poly_state]],
-    #                        columns=['s 5,8,11,14,17-c20:5', 's омега-3/омега-6', 's полиненасыщ'])
+
 
 def upload():
     params = pd.read_excel(uploaded_file, sheet_name='params')
@@ -81,47 +82,55 @@ if 'uploaded_table' in state:
     st.subheader("Загруженные данные")
     st.dataframe(state['uploaded_table'])
     if st.button('Провести анализ всех пациентов из файла'):
-        out_table = state['uploaded_table']
+        out_table = copy.deepcopy(state['uploaded_table'])
         out_table.insert(1,"Модель 1", None)
         out_table.insert(2, "Модель 2", None)
         out_table.insert(3, "Модель 3", None)
         out_table.insert(4, "Модель 4", None)
+        out_table.insert(5, "Модель 5", None)
         for i in range(1,len(state['uploaded_table'].index)+1):
+
             if i == 0:
                 patient = state['uploaded_table'].iloc[:1]
             else:
                 patient = state['uploaded_table'].iloc[i-1:i]
-            df_model1 = pd.DataFrame([[patient['Гемоглобин'], patient['MCV'], patient['e c-цис (c-c18:1)']]],
-                                     columns=['Гемоглобин', 'MCV', 'e c-цис (c-c18:1)'])
-            res1 = 0
-            for col in range(len(df_model1.columns)):
-                res1 += df_model1.iloc[0,col]
-            diagnose1 = healthy(res1.iloc[0])
+            #st.write(patient['гемоглобин'])
+            answer1 = calculateDiagnoseDiseaseFile(0, patient)
+            answer2 = calculateDiagnoseDiseaseFile(1,patient)
+            answer3 = calculateDiagnoseDiseaseFile(2,patient)
+            answer4 = calculateDiagnoseFormFile(3, patient)
+            answer5 = calculateDiagnoseFormFile(4, patient)
 
-            df_model2 = pd.DataFrame([[patient['Гематокрит'], patient['Доля дискоцитов'], patient['s t-c18:1']]],
-                                     columns=['Гематокрит', 'Доля дискоцитов', 's t-c18:1'])
-            res2 = 0
-            for col in range(len(df_model2.columns)):
-                res2 += df_model2.iloc[0,col]
-            diagnose2 = healthy(res2.iloc[0])
-
-            df_model3 = pd.DataFrame([[patient['Ампл деф на 1 МГц'], patient['СОЭ'], patient['Скорость движения эритроцитов']]],
-                                     columns=['Ампл деф на 1мгц', 'СОЭ', 'Скорость движения эритроцитов'])
-            res3 = 0
-            for col in range(len(df_model3.columns)):
-                res3 += df_model3.iloc[0,col]
-            diagnose3 = healthy(res3.iloc[0])
-
-            df_model4 = pd.DataFrame([[patient['s 5,8,11,14,17-c20:5'], patient['s омега-3/омега-6'], patient['s полиненасыщ']]],
-                                     columns=['s 5,8,11,14,17-c20:5', 's омега-3/омега-6', 's полиненасыщ'])
-            res4 = 0
-            for col in range(len(df_model4.columns)):
-                res4 += df_model4.iloc[0,col]
-            diagnose4 = healthy(res4.iloc[0])
-            out_table.at[i-1, 'Модель 1'] = diagnose1
-            out_table.at[i-1, 'Модель 2'] = diagnose2
-            out_table.at[i-1, 'Модель 3'] = diagnose3
-            out_table.at[i-1, 'Модель 4'] = diagnose4
+            out1 = ''
+            out2 = ''
+            out3 = ''
+            out4 = ''
+            out5 = ''
+            for tclass, prob in answer1:
+                out1 += (f'{tclass: >6}: {prob:.1%}')
+                out1 += '\n'
+            out_table.at[i-1, 'Модель 1'] = out1
+            for tclass, prob in answer2:
+                out2 += (f'{tclass: >6}: {prob:.1%}')
+                out2 += '\n'
+            out_table.at[i - 1, 'Модель 2'] = out2
+            for tclass, prob in answer3:
+                out3 += (f'{tclass: >6}: {prob:.1%}')
+                out3 += '\n'
+            out_table.at[i-1, 'Модель 3'] = out3
+            for tclass, prob in answer4:
+                out4 += (f'{tclass: >6}: {prob:.1%}')
+                out4 += '\n'
+            out_table.at[i-1, 'Модель 4'] = out4
+            for tclass, prob in answer5:
+                out5 += (f'{tclass: >6}: {prob:.1%}')
+                out5 += '\n'
+            out_table.at[i-1, 'Модель 5'] = out5
+           #out_table.at[i-1, 'Модель 1'] = answer1
+           #out_table.at[i-1, 'Модель 2'] = answer2
+           #out_table.at[i-1, 'Модель 3'] = answer3
+           #out_table.at[i-1, 'Модель 4'] = answer4
+           #out_table.at[i-1, 'Модель 5'] = answer5
 
         out_table
         buffer = io.BytesIO()

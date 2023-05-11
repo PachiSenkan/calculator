@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 from streamlit import session_state as state
-from Главная import healthy
 from pages.neuralModels import load_model_file
 from pages.neuralModels import getFeaturesFromModel
 from pages.neuralModels import getValuesForModel
+from pages.neuralModels import calculateDiagnoseForm
 from pages.neuralModels import FileList
 st.set_page_config(page_title='Калькулятор ХВЗК')
 
@@ -14,8 +14,8 @@ if state.keys():
     st.subheader("Введенные показатели")
     if 'FIO' in state:
         state['FIO']
-    clf = load_model_file(FileList[3])
-    listOfFeatures = getFeaturesFromModel(clf)
+    #clf = load_model_file(FileList[3])
+    #listOfFeatures = getFeaturesFromModel(clf)
     dictOfSliderVal = {
         'гемоглобин': 110.,
         'гематокрит': 36.,
@@ -36,25 +36,31 @@ if state.keys():
         'кальпротектин': 234.,
         'фибриноген': 6.,
     }
-    for v in dictOfSliderVal:
-        if v in state:
-            state[v] = dictOfSliderVal[v]
-    # dictOfSliderVal
-    dictOfValForModel = getValuesForModel(clf)
-    df_forModel = pd.DataFrame.from_dict(dictOfValForModel, orient='index').T  # , 'columns' 'index', 'tight'
-    df_forModel
-
-    targetClasesName = ['НЯК', 'НКК']
-
-    y_probability = clf.predict_proba(df_forModel.values)[0]
-
-    y_fullAnswer = clf.predict(df_forModel.values)
-    y_numOfClass = int(y_fullAnswer[0][0])
-
-    st.subheader("Предлагаемый диагноз")
-
-    for tclass, prob in zip(targetClasesName, y_probability):
-        st.write(f'{tclass:>6}: {prob:.1%}')
+    state['Exception'] = False
+    result = calculateDiagnoseForm(3, None, True)
+    if result:
+        st.subheader("Предлагаемый диагноз")
+        for tclass, prob in result:
+            st.write(f'{tclass: >6}: {prob:.1%}')
+    #for v in dictOfSliderVal:
+    #    if v in state:
+    #        state[v] = dictOfSliderVal[v]
+    ## dictOfSliderVal
+    #dictOfValForModel = getValuesForModel(clf)
+    #df_forModel = pd.DataFrame.from_dict(dictOfValForModel, orient='index').T  # , 'columns' 'index', 'tight'
+    #df_forModel
+    #
+    #targetClasesName = ['НЯК', 'НКК']
+    #
+    #y_probability = clf.predict_proba(df_forModel.values)[0]
+    #
+    #y_fullAnswer = clf.predict(df_forModel.values)
+    #y_numOfClass = int(y_fullAnswer[0][0])
+    #
+    #st.subheader("Предлагаемый диагноз")
+    #
+    #for tclass, prob in zip(targetClasesName, y_probability):
+    #    st.write(f'{tclass:>6}: {prob:.1%}')
 
     if 'uploaded_params' in state:
         st.subheader("Все данные пациента")
