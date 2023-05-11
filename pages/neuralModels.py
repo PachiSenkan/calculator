@@ -68,11 +68,11 @@ def getValuesForModelFile(model, patient):
     return dictOfValForModel
 
 FileList = [
-    r'calculator\dip\models\ХВЗК Здоровые-Больные СлучайныйЛес 5деревъев 5глубина X-Свой4. vPub.pkcls',
-    r'calculator\dip\models\ХВЗК Здоровые-Больные Дерево5 X-Свой4. vPub.pkcls',
-    r'calculator\dip\models\ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
-    r'calculator\dip\models\ХВЗК НЯК-НКК Дерево5 X-Свой4. vPub.pkcls',
-    r'calculator\dip\models\ХВЗК НЯК-НКК LogisticReg_L1_C=0. vPub.pkcls',
+    r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК Здоровые-Больные СлучайныйЛес 5деревъев 5глубина X-Свой4. vPub.pkcls',
+    r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК Здоровые-Больные Дерево5 X-Свой4. vPub.pkcls',
+    r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
+    r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК НЯК-НКК Дерево5 X-Свой4. vPub.pkcls',
+    r'C:\Users\Pachi\PycharmProjects\dip\models\ХВЗК НЯК-НКК LogisticReg_L1_C=0. vPub.pkcls',
 ]
 
 
