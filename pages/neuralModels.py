@@ -68,11 +68,11 @@ def getValuesForModelFile(model, patient):
     return dictOfValForModel
 
 FileList = [
-    r'pages/models/ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
-    r'pages/models/ХВЗК Здоровые-Больные Дерево5 X-Свой4. vPub.pkcls',
-    r'pages/models/ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
-    r'pages/models/ХВЗК НЯК-НКК Дерево5 X-Свой4. vPub.pkcls',
-    r'pages/models/ХВЗК НЯК-НКК LogisticReg_L1_C=0. vPub.pkcls',
+    r'models/ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
+    r'models/ХВЗК Здоровые-Больные Дерево5 X-Свой4. vPub.pkcls',
+    r'models/ХВЗК Здоровые-Больные LogisticReg_L1_C=0. vPub.pkcls',
+    r'models/ХВЗК НЯК-НКК Дерево5 X-Свой4. vPub.pkcls',
+    r'models/ХВЗК НЯК-НКК LogisticReg_L1_C=0. vPub.pkcls',
 ]
 
 
