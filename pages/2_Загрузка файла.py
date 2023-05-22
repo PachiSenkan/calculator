@@ -1,49 +1,23 @@
-import time
 import streamlit as st
 import pandas as pd
-import numpy as np
-import random
-import openpyxl
 import io
 import copy
-from streamlit import cache
 from streamlit import session_state as state
-from pages.neuralModels import calculateDiagnoseFormFile
-from pages.neuralModels import calculateDiagnoseDiseaseFile
-from pages.neuralModels import calculateDiagnoseForm
-from pages.neuralModels import calculateDiagnoseDisease
-from pages.neuralModels import getFeaturesFromModel
-from pages.neuralModels import getValuesForModel
-from pages.neuralModels import getValuesForModelFile
+from neuralModels import calculateDiagnoseFormFile
+from neuralModels import calculateDiagnoseDiseaseFile
 
 st.header("Диагностический калькулятор для оценки формы и стадии воспалительных заболеваний кишечника")
 
 st.subheader("Выберите файл для загрузки")
 
-uploaded_file = st.file_uploader("Загрузка файла", label_visibility="hidden")
+uploaded_file = st.file_uploader("Загрузка файла", label_visibility="hidden", type='xlsx')
 
-
-# if uploaded_file is not None:
-#    params = pd.read_excel(uploaded_file, sheet_name='params')
-#    pars = params.columns.ravel().tolist()
-#    sheet = pd.read_excel(uploaded_file, sheet_name='main')
-#    st.subheader("Загруженные данные")
-#    #sheet
-#    i = 0
-#    for par in pars:
-#        # if par != 'FIO':
-#        state[par] = sheet.iloc[0, i]
-#        i += 1
-# state
-# @st.experimental_memo()
-@st.cache
+@st.experimental_singleton
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_excel("Результаты.xlsx")
 
 if state.keys():
     ""
-
 
 def upload():
     params = pd.read_excel(uploaded_file, sheet_name='params')
@@ -126,11 +100,6 @@ if 'uploaded_table' in state:
                 out5 += (f'{tclass: >6}: {prob:.1%}')
                 out5 += '\n'
             out_table.at[i-1, 'Модель 5'] = out5
-           #out_table.at[i-1, 'Модель 1'] = answer1
-           #out_table.at[i-1, 'Модель 2'] = answer2
-           #out_table.at[i-1, 'Модель 3'] = answer3
-           #out_table.at[i-1, 'Модель 4'] = answer4
-           #out_table.at[i-1, 'Модель 5'] = answer5
 
         out_table
         buffer = io.BytesIO()
@@ -143,11 +112,6 @@ if 'uploaded_table' in state:
                 file_name='Результаты.xlsx',
                 mime='application/vnd.ms-excel'
             )
-        #out_file = convert_df(out_table)
-        #st.download_button(
-        #    label="Скачать файл результатов",
-        #    file_name='large_df.csv'
-        #)
 
 
 # upload(uploaded_file)
