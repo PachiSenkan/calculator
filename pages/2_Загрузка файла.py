@@ -105,7 +105,7 @@ if 'uploaded_table' in state:
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
             out_table.to_excel(writer, index=False)
-            writer.save()
+            writer.close()
             download = st.download_button(
                 label="Скачать файл результатов",
                 data=buffer,
