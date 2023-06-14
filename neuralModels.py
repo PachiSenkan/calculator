@@ -8,7 +8,7 @@ import pickle
 import json
 from streamlit import session_state as state
 
-@st.experimental_singleton
+@st.cache_resource
 def load_model_file(fileName):
     with open(fileName, 'rb') as filestream:
         clf = pickle.load(filestream)
